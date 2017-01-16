@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# Via: http://stackoverflow.com/questions/13322485/how-to-i-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
+export XDEBUG_HOST=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
+
+export APP_ENV=${APP_ENV:-local}
+export APP_PORT=${APP_PORT:-8080}
+export DB_PORT=${DB_PORT:-3306}
+export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
+export DB_NAME=${DB_NAME:-helpspot}
+export DB_USER=${DB_USER:-helpspot}
+export DB_PASS=${DB_PASS:-secret}
+
+# If $CI_BUILD_REF is set, the file is ran from GitLab
+if [ ! -z "$CI_BUILD_REF" ]; then
+    # Use custom composer cache dir for sharing cache along builds
+    COMPOSER_CACHE_DIR="-e COMPOSER_CACHE_DIR=/composer_cache"
+
+    # Use ci file for ci development
+    COMPOSE_FILE="ci"
+
+    # Enable pseudo-TTY allocation for CI (GitLab)
+    TTY="-T"
+else
+    # Create volume (reuse is exists) to reuse
+    # compose cache along multiple projects
+    docker volume create --name=composer_cache >/dev/null
+
+    # Disable pseudo-TTY allocation for CI (GitLab)
+    TTY=""
+
+    # Use default composer cache dir from composer
+    COMPOSER_CACHE_DIR=""
+
+    # Use dev file for local development
+    COMPOSE_FILE="dev"
+fi
+
+
+COMPOSE="docker-compose -f docker-compose.$COMPOSE_FILE.yml"
+
+if [ $# -gt 0 ];then
+
+    # If "artisan" is used, pass-thru to "artisan" inside a new container
+    if [ "$1" == "artisan" ]; then
+        shift 1
+        $COMPOSE run --rm $TTY \
+            -w /var/www/html \
+            app \
+            php artisan "$@"
+
+    # If "composer" is used, pass-thru to "composer" inside a new container
+    elif [ "$1" == "composer" ]; then
+        shift 1
+        $COMPOSE run --rm $TTY \
+            -w /var/www/html \
+            $COMPOSER_CACHE_DIR \
+            app \
+            composer "$@"
+
+    # If "test" is used, run unit tests, pass-thru any extra arguments to php-unit
+    elif [ "$1" == "test" ]; then
+        shift 1
+        $COMPOSE run --rm $TTY \
+            -w /var/www/html \
+            app \
+            ./vendor/bin/phpunit "$@"
+
+
+    # If "yarn" is used, run yarn from our node container
+    elif [ "$1" == "yarn" ]; then
+        $COMPOSE run --rm $TTY \
+            -w /var/www/html \
+            node \
+            yarn "$@"
+
+    # If "gulp" is used, run gulp from our node container
+    elif [ "$1" == "gulp" ]; then
+        shift 1
+        $COMPOSE run --rm $TTY \
+            -w /var/www/html \
+            node \
+            ./node_modules/.bin/gulp "$@"
+    else
+        $COMPOSE "$@"
+    fi
+else
+    $COMPOSE ps
+fi

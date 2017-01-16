@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  app:
+    extends:
+      file: docker-compose.base.yml
+      service: app
+    volumes:
+    - './:/var/www/html'
+    - '/composer_cache:/composer_cache'
+
+  node:
+    extends:
+      file: docker-compose.base.yml
+      service: node
+
+networks:
+  sdnet:
+    driver: "bridge"
+    
+volumes:
+  mysqldata:
+    driver: "local"

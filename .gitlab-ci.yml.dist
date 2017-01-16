@@ -1,0 +1,51 @@
+# Custom image where docker-compose is installed
+image: tmaier/docker-compose
+
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  GIT_DEPTH: "1"
+
+cache:
+  untracked: true
+  paths:
+    - vendor
+
+before_script:
+  - cp .env.example .env
+
+test:
+  stage: test
+  script:
+    - /bin/sh develop composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - /bin/sh develop artisan key:generate
+    - /bin/sh develop test
+
+build:
+  stage: build
+  script:
+    - /bin/sh develop composer install --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
+
+deploy_to_staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+    url: https://staging.wearejust.com
+  only:
+  - staging
+
+deploy_to_production:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://wearejust.com
+  when: manual
+  only:
+  - master
