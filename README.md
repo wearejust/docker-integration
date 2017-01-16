@@ -4,10 +4,13 @@ This package is an example on how to integrate your existing project, and put it
 This example has an dev environment, an an ci environment.
 
 
-## Installation
+## Installation (OSX)
 First, please follow the installation instructions of [Dinghy](https://github.com/codekitchen/dinghy)
 
 If [Dinghy](https://github.com/codekitchen/dinghy) is correctly installed, that's basically the installation :-)
+
+## Installation (Linux)
+Be sure to install to install Docker Engine, Docker Compose and Docker Machine
 
 ## GitLab Installation (optional)
 This repositories offers an ```.gitlab-ci.yml.example``` file which hash some defaults in it. Rename it to ```.gitlab-ci.yml``` to enable gitlab integration. Within this file 4 environments exist (```test```, ```build```, ```deploy_to_staging```, ```deploy_to_producation```). In this file (basically) the same commands are used to run your containers, see usage.
