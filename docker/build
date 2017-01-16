@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
 docker build -f app/Dockerfile -t wearejust/app:latest ./app
+docker build -f elasticsearch/Dockerfile -t wearejust/elasticsearch:latest ./elasticsearch
 docker build -f node/Dockerfile -t wearejust/node:latest ./node
+docker build -f mysql/Dockerfile -t wearejust/mysql:latest ./mysql
 

@@ -19,5 +19,5 @@ networks:
     driver: "bridge"
     
 volumes:
-  mysqldata:
+  mysql_data:
     driver: "local"

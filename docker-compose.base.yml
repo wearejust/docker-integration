@@ -10,11 +10,24 @@ services:
     - sdnet
 
   mysql:
-    image: mysql:5.7
+    build:
+      context: ./docker/mysql
+      dockerfile: Dockerfile
+    image: wearejust/mysql
     volumes:
-    - mysqldata:/var/lib/mysql
+    - mysql_data:/var/lib/mysql
     networks:
     - sdnet
+
+  elasticsearch:
+    build:
+      context: ./docker/elasticsearch
+      dockerfile: Dockerfile
+    image: wearejust/elasticsearch
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/config
+    networks:
+    - sdnet 
 
   node:
     build:

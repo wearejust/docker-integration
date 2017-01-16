@@ -18,6 +18,11 @@ services:
       file: docker-compose.base.yml
       service: node
 
+  elasticsearch:
+    extends:
+      file: docker-compose.base.yml
+      service: elasticsearch
+
   mysql:
     extends:
         file: docker-compose.base.yml
@@ -35,5 +40,7 @@ networks:
     driver: "bridge"
 
 volumes:
-  mysqldata:
+  mysql_data:
+    driver: "local"
+  elasticsearch_data:
     driver: "local"
