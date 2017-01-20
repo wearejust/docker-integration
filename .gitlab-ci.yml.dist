@@ -10,6 +10,7 @@ variables:
   GIT_DEPTH: "1"
 
 cache:
+  key: "$CI_BUILD_REF"
   untracked: true
   paths:
     - vendor
@@ -28,11 +29,17 @@ build:
   stage: build
   script:
     - /bin/sh develop composer install --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - /bin/rm .git
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - ./    
 
 deploy_to_staging:
   stage: deploy
   script:
-    - echo "Deploy to staging server"
+    - /bin/sh develop composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - ./bin/dep deploy production --projectId $CI_PROJECT_ID --refName $CI_BUILD_REF_NAME --job build --token $CI_PRIVATE_TOKEN
   environment:
     name: staging
     url: https://staging.wearejust.com
