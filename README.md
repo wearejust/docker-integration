@@ -49,3 +49,16 @@ Will run an ```gulp ``` command with the arguments you give it in an seperate co
 
 ### ```./develop```
 Will run an ```docker ps``` command
+
+
+## MailHog
+You can use this service to recieve / test local mails being send from the aplication.
+WebUI: https://app.*.docker:8025, for sending to the application you can use the followingsettings:
+```
+MAIL_DRIVER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_ENCRYPTION=
+```
+Detailed information can be found [in the MailHog repository](https://github.com/mailhog/MailHog).
+

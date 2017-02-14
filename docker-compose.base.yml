@@ -19,6 +19,16 @@ services:
     networks:
     - sdnet
 
+  mailhog:
+    build:
+      context: ./docker/mailhog
+      dockerfile: Dockerfile
+    image: wearejust/mailhog
+    ports:
+        - "8025:8025"
+    networks:
+    - sdnet
+
   elasticsearch:
     build:
       context: ./docker/elasticsearch

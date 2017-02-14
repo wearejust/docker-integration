@@ -23,6 +23,16 @@ services:
       file: docker-compose.base.yml
       service: elasticsearch
 
+  mailhog:
+    build:
+      context: ./docker/mailhog
+      dockerfile: Dockerfile
+    image: wearejust/mailhog
+    ports:
+        - "8025:8025"
+    networks:
+    - sdnet
+    
   mysql:
     extends:
         file: docker-compose.base.yml
