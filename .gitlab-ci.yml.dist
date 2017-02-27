@@ -19,6 +19,7 @@ build:
     - sh develop composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction
     - rsync -avzrq $(pwd)/* $(pwd)/dist --exclude='.git/'
   artifacts:
+    expire_in: 1 week
     paths:
       - dist/
 
@@ -27,8 +28,12 @@ prepare:
   script:
     - tar -C dist -zcf artifact.tar.gz .
   artifacts:
+    expire_in: 1 day
     paths:
       - artifact.tar.gz
+  only:
+    - staging
+    - master
 
 deploy_to_staging:
   stage: deploy
@@ -40,6 +45,8 @@ deploy_to_staging:
     url: http://XXX.com
   dependencies:
     - prepare
+  only:
+    - staging
 
 deploy_to_production:
   stage: deploy
@@ -52,3 +59,5 @@ deploy_to_production:
   when: manual
   dependencies:
     - prepare
+  only:
+    - master    
