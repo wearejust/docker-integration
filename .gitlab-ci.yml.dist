@@ -1,58 +1,54 @@
-# Custom image where docker-compose is installed
-image: tmaier/docker-compose
+image: wearejust/docker-compose:latest
 
 stages:
-  - test
   - build
+  - prepare
   - deploy
 
-variables:
-  GIT_DEPTH: "1"
-
 cache:
-  key: "$CI_BUILD_REF"
-  untracked: true
   paths:
     - vendor
+    - node_modules
 
 before_script:
   - cp .env.example .env
 
-test:
-  stage: test
-  script:
-    - /bin/sh develop composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
-    - /bin/sh develop artisan key:generate
-    - /bin/sh develop test
-
 build:
   stage: build
   script:
-    - /bin/sh develop composer install --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
-    - /bin/rm .git
+    - sh develop composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - rsync -avzrq $(pwd)/* $(pwd)/dist --exclude='.git/'
   artifacts:
-    expire_in: 1 day
     paths:
-      - ./    
+      - dist/
+
+prepare:
+  stage: prepare
+  script:
+    - tar -C dist -zcf artifact.tar.gz .
+  artifacts:
+    paths:
+      - artifact.tar.gz
 
 deploy_to_staging:
   stage: deploy
   script:
-    - /bin/sh develop composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction
-    - ./bin/dep deploy production --projectId $CI_PROJECT_ID --refName $CI_BUILD_REF_NAME --job build --token $CI_PRIVATE_TOKEN
+    - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
+    - sh develop php bin/dep deploy staging -vv --dist=artifact.tar.gz
   environment:
     name: staging
-    url: https://staging.wearejust.com
-  only:
-  - staging
+    url: http://XXX.com
+  dependencies:
+    - prepare
 
 deploy_to_production:
   stage: deploy
   script:
-    - echo "Deploy to production server"
+    - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
+    - sh develop php bin/dep deploy production -vv --dist=artifact.tar.gz
   environment:
     name: production
-    url: https://wearejust.com
+    url: http://XXX.com
   when: manual
-  only:
-  - master
+  dependencies:
+    - prepare
