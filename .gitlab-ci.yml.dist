@@ -16,6 +16,8 @@ build:
   stage: build
   script:
     - sh develop composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - sh develop yarn install
+    - sh develop gulp
     - rsync -avzrq $(pwd)/* $(pwd)/dist --exclude='.git/'
   artifacts:
     expire_in: 1 week

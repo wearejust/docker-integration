@@ -68,6 +68,11 @@ services:
       MYSQL_USER: "${DB_USER}"
       MYSQL_PASSWORD: "${DB_PASS}"
 
+  node:
+    extends:
+      file: docker-compose.base.yml
+      service: node
+      
 networks:
   sdnet:
     driver: "bridge"
