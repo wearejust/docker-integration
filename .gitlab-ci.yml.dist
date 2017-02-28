@@ -18,7 +18,7 @@ build:
     - sh develop composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction
     - sh develop yarn install
     - sh develop gulp
-    - rsync -avzrq $(pwd)/* $(pwd)/dist --exclude='.git/'
+    - rsync -avzrq . dist --exclude='.git/' --exclude='node_modules/' --exclude='docker*' --exclude='/develop' --exclude='/deploy.php' --exclude='/gulpfile.js' --exclude='/grumphp.yml' --exclude='/codeception.yml' --exclude='tests/' --exclude='test/' --exclude='Test/' --exclude='package.json' --exclude='composer.json' --exclude='.gitlab-ci.yml' --exclude='.php_cs' --exclude='.gitattributes'  --exclude='.gitignore' --exclude='/.env'
   artifacts:
     expire_in: 1 week
     paths:
