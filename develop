@@ -58,6 +58,14 @@ if [ $# -gt 0 ];then
             app \
             composer "$@"
 
+    # If "php" is used, pass-thru to "php" inside a new container
+    elif [ "$1" == "php" ]; then
+        shift 1
+        $COMPOSE run --rm $TTY \
+            -w /var/www/html \
+            app \
+            php "$@"
+
     # If "test" is used, run unit tests, pass-thru any extra arguments to php-unit
     elif [ "$1" == "test" ]; then
         shift 1
@@ -69,6 +77,7 @@ if [ $# -gt 0 ];then
 
     # If "yarn" is used, run yarn from our node container
     elif [ "$1" == "yarn" ]; then
+        shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
             node \

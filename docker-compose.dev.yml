@@ -13,10 +13,33 @@ services:
       APP_ENV: ${APP_ENV}
       XDEBUG_HOST: ${XDEBUG_HOST}
 
-  node:
+  composer:
+    command: ['composer', 'install', '--no-interaction']
+    working_dir: /var/www/html
+    extends:
+      file: docker-compose.base.yml
+      service: app
+    volumes:
+      - ./:/var/www/html
+
+  yarn:
+    command: ['yarn', 'install']
     extends:
       file: docker-compose.base.yml
       service: node
+    volumes:
+      - ./:/var/www/html
+
+  gulp:
+    command: ["node_modules/.bin/gulp", 'watch']
+    working_dir: /var/www/html
+    extends:
+      file: docker-compose.base.yml
+      service: node
+    depends_on:
+      - yarn
+    volumes:
+      - ./:/var/www/html
 
   elasticsearch:
     extends:

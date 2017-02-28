@@ -9,7 +9,12 @@ services:
     - './:/var/www/html'
     - '/composer_cache:/composer_cache'
 
-  node:
+  yarn:
+    extends:
+      file: docker-compose.base.yml
+      service: node
+
+  gulp:
     extends:
       file: docker-compose.base.yml
       service: node
