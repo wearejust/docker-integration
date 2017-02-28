@@ -2,7 +2,6 @@ image: wearejust/docker-compose:latest
 
 stages:
   - build
-  - prepare
   - deploy
 
 cache:
