@@ -23,41 +23,27 @@ build:
     paths:
       - dist/
 
-prepare:
-  stage: prepare
-  script:
-    - tar -C dist -zcf artifact.tar.gz .
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - artifact.tar.gz
-  only:
-    - staging
-    - master
-
 deploy_to_staging:
   stage: deploy
   script:
+    - tar -C dist -zcf artifact.tar.gz .
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
     - sh develop php bin/dep deploy staging -vv --dist=artifact.tar.gz
   environment:
     name: staging
     url: http://XXX.com
-  dependencies:
-    - prepare
   only:
     - staging
 
 deploy_to_production:
   stage: deploy
   script:
+    - tar -C dist -zcf artifact.tar.gz .
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
     - sh develop php bin/dep deploy production -vv --dist=artifact.tar.gz
   environment:
     name: production
     url: http://XXX.com
   when: manual
-  dependencies:
-    - prepare
   only:
     - master    
