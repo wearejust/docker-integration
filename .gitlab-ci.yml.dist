@@ -35,6 +35,10 @@ deploy_to_staging:
     url: http://XXX.com
   only:
     - staging
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - storage/app/backups/    
 
 deploy_to_production:
   stage: deploy
@@ -47,4 +51,8 @@ deploy_to_production:
     url: http://XXX.com
   when: manual
   only:
-    - master    
+    - master  
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - storage/app/backups/  
