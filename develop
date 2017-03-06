@@ -90,6 +90,25 @@ if [ $# -gt 0 ];then
             -w /var/www/html \
             node \
             ./node_modules/.bin/gulp "$@"
+
+    # If "share" is used, run ishi to share
+    elif [ "$1" == "share" ]; then
+        shift 1
+
+        GREEN='\033[00;32m' YELLOW='\033[11;33m' NORMAL='\033[0m' RED='\033[0;31m'
+
+        echo -e "${RED}Ishi is required for this to work correctly (https://github.com/suin/ishi)${NORMAL}"
+        echo -e "IP for mobile use after setup: ${GREEN}${XDEBUG_HOST}${NORMAL}"
+
+        DOMAIN=${1:-"browsersync.$(echo `basename $PWD`).docker"}
+        PORT=${2:-3000}
+
+        echo -e "\n${GREEN}Visit http://${XDEBUG_HOST}:${PORT}${NORMAL}"
+
+        echo -e "${YELLOW}"
+        sudo ${HOME}/go/bin/ishi --listen ${PORT} http://${DOMAIN}:${2:-$PORT}
+        echo -e "${NORMAL}"
+
     else
         $COMPOSE "$@"
     fi

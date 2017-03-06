@@ -72,6 +72,15 @@ services:
       MYSQL_USER: "${DB_USER}"
       MYSQL_PASSWORD: "${DB_PASS}"
 
+  browsersync:
+    image: ustwo/browser-sync:latest
+    command: start --proxy "REPLACE_THIS_WITH_FQDN" --files "public/css/*.css"
+    volumes:
+      - ./:/source
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+
   node:
     extends:
       file: docker-compose.base.yml
