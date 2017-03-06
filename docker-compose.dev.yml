@@ -51,14 +51,11 @@ services:
       service: elasticsearch
 
   mailhog:
-    build:
-      context: ./docker/mailhog
-      dockerfile: Dockerfile
-    image: wearejust/mailhog
+    extends:
+      file: docker-compose.base.yml
+      service: mailhog
     ports:
         - "8025:8025"
-    networks:
-    - sdnet
     
   mysql:
     extends:
