@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 services:
   app:
@@ -29,6 +29,9 @@ services:
       service: node
     volumes:
       - ./:/var/www/html
+    healthcheck:
+      test: '[ -d ./node_modules/.bin ] && exit 0 || exit 1'
+      retries: 100
 
   gulp:
     command: ["node_modules/.bin/gulp", 'watch']
@@ -37,7 +40,8 @@ services:
       file: docker-compose.base.yml
       service: node
     depends_on:
-      - yarn
+      yarn:
+        condition: service_healthy
     volumes:
       - ./:/var/www/html
 
