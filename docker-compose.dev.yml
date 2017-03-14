@@ -27,16 +27,7 @@ services:
         - "8025:8025"
     networks:
     - sdnet
-  
-  browsersync:
-    image: ustwo/browser-sync:latest
-    command: start --proxy "app.robkoudijs.docker" --files "public/css/*.css"
-    volumes:
-      - ./:/source
-    ports:
-      - "3000:3000"
-      - "3001:3001"
-  
+
   mysql:
     extends:
         file: docker-compose.base.yml
@@ -48,7 +39,16 @@ services:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER: "${DB_USER}"
       MYSQL_PASSWORD: "${DB_PASS}"
-  
+
+  browsersync:
+    image: ustwo/browser-sync:latest
+    command: start --proxy "REPLACE_THIS_WITH_FQDN" --files "public/css/*.css"
+    volumes:
+      - ./:/source
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+
   node:
     extends:
       file: docker-compose.base.yml
