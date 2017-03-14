@@ -12,51 +12,31 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       XDEBUG_HOST: ${XDEBUG_HOST}
-
-  composer:
-    command: ['composer', 'install', '--no-interaction']
-    working_dir: /var/www/html
-    extends:
-      file: docker-compose.base.yml
-      service: app
-    volumes:
-      - ./:/var/www/html
-
-  yarn:
-    command: ['yarn', 'install']
-    extends:
-      file: docker-compose.base.yml
-      service: node
-    volumes:
-      - ./:/var/www/html
-    healthcheck:
-      test: '[ -d ./node_modules/.bin ] && exit 0 || exit 1'
-      retries: 100
-
+  
   gulp:
-    command: ["node_modules/.bin/gulp", 'watch']
-    working_dir: /var/www/html
+    command: ["/var/www/html/node_modules/.bin/gulp", 'watch']
     extends:
       file: docker-compose.base.yml
       service: node
-    depends_on:
-      yarn:
-        condition: service_healthy
     volumes:
       - ./:/var/www/html
-
-  elasticsearch:
-    extends:
-      file: docker-compose.base.yml
-      service: elasticsearch
-
+  
   mailhog:
-    extends:
-      file: docker-compose.base.yml
-      service: mailhog
+    image: mailhog/mailhog:latest
     ports:
         - "8025:8025"
-    
+    networks:
+    - sdnet
+  
+  browsersync:
+    image: ustwo/browser-sync:latest
+    command: start --proxy "app.robkoudijs.docker" --files "public/css/*.css"
+    volumes:
+      - ./:/source
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+  
   mysql:
     extends:
         file: docker-compose.base.yml
@@ -68,18 +48,14 @@ services:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER: "${DB_USER}"
       MYSQL_PASSWORD: "${DB_PASS}"
-
+  
   node:
     extends:
       file: docker-compose.base.yml
       service: node
-      
 networks:
   sdnet:
     driver: "bridge"
-
 volumes:
   mysql_data:
-    driver: "local"
-  elasticsearch_data:
     driver: "local"

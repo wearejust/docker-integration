@@ -4,11 +4,11 @@
 export XDEBUG_HOST=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
 
 export APP_ENV=${APP_ENV:-local}
-export APP_PORT=${APP_PORT:-8080}
+export APP_PORT=${APP_PORT:-8081}
 export DB_PORT=${DB_PORT:-3306}
 export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
-export DB_NAME=${DB_NAME:-helpspot}
-export DB_USER=${DB_USER:-helpspot}
+export DB_NAME=${DB_NAME:-robkoudijs}
+export DB_USER=${DB_USER:-robkoudijs}
 export DB_PASS=${DB_PASS:-secret}
 
 # If $CI_BUILD_REF is set, the file is ran from GitLab
@@ -58,7 +58,7 @@ if [ $# -gt 0 ];then
             app \
             composer "$@"
 
-    # If "php" is used, pass-thru to "php" inside a new container
+    # If "composer" is used, pass-thru to "composer" inside a new container
     elif [ "$1" == "php" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
@@ -90,7 +90,31 @@ if [ $# -gt 0 ];then
             -w /var/www/html \
             node \
             ./node_modules/.bin/gulp "$@"
+
+    # If "share" is used, run ishi to share
+    elif [ "$1" == "share" ]; then
+        shift 1
+
+        GREEN='\033[00;32m' YELLOW='\033[11;33m' NORMAL='\033[0m' RED='\033[0;31m'
+
+        echo -e "${RED}Ishi is required for this to work correctly (https://github.com/suin/ishi)${NORMAL}"
+        echo -e "IP for mobile use after setup: ${GREEN}${XDEBUG_HOST}${NORMAL}"
+
+        DOMAIN=${1:-"browsersync.$(echo `basename $PWD`).docker"}
+        PORT=${2:-3000}
+
+        echo -e "\n${GREEN}Visit http://${XDEBUG_HOST}:${PORT}${NORMAL}"
+
+        echo -e "${YELLOW}"
+        sudo ${HOME}/go/bin/ishi --listen ${PORT} http://${DOMAIN}:${2:-$PORT}
+        echo -e "${NORMAL}"
+
     else
+        if [ "$1" == "up" ]; then
+            sh ./develop yarn install
+            sh ./develop composer install --no-scripts
+        fi
+
         $COMPOSE "$@"
     fi
 else

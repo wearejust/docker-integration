@@ -6,19 +6,19 @@ services:
       file: docker-compose.base.yml
       service: app
     volumes:
-    - './:/var/www/html'
-    - '/composer_cache:/composer_cache'
-
+      - './:/var/www/html'
+      - '/composer_cache:/composer_cache'
+  
   yarn:
     extends:
       file: docker-compose.base.yml
       service: node
-
+  
   gulp:
     extends:
       file: docker-compose.base.yml
       service: node
-
+  
   node:
     extends:
       file: docker-compose.base.yml

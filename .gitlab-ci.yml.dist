@@ -1,7 +1,8 @@
-image: wearejust/docker-compose:latest
+image: wearejust/docker-compose:1.1
 
 stages:
   - build
+  - distribute
   - deploy
 
 cache:
@@ -15,44 +16,53 @@ before_script:
 build:
   stage: build
   script:
+    - sh develop composer install
+
+distribute:
+  stage: distribute
+  script:
+    - git archive --format=tar --worktree-attributes $(git rev-parse HEAD) | tar -xf -  -C dist
+    - cd dist
     - sh develop composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction
     - sh develop yarn install
     - sh develop gulp
-    - rsync -avzrq . dist --exclude='.git/' --exclude='node_modules/' --exclude='docker*' --exclude='/develop' --exclude='/deploy.php' --exclude='/gulpfile.js' --exclude='/grumphp.yml' --exclude='/codeception.yml' --exclude='tests/' --exclude='test/' --exclude='Test/' --exclude='package.json' --exclude='composer.json' --exclude='.gitlab-ci.yml' --exclude='.php_cs' --exclude='.gitattributes'  --exclude='.gitignore' --exclude='/.env'
+    - rm -rf node_modules docker* develop deploy.php gulpfile.js grumphp.yml codeception.yml package.json composer.json .gitlab-ci.yml .php_cs .env
+    - tar -C . -zcf ../artifact.tar.gz .
   artifacts:
     expire_in: 1 week
     paths:
-      - dist/
+      - artifact.tar.gz
+  only:
+    - staging
+    - master
 
 deploy_to_staging:
   stage: deploy
   script:
-    - tar -C dist -zcf artifact.tar.gz .
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
     - sh develop php bin/dep deploy staging -vv --dist=artifact.tar.gz
   environment:
     name: staging
-    url: http://XXX.com
+    url: http://koudijs.justnotfinished.com
   only:
     - staging
   artifacts:
     expire_in: 1 day
     paths:
-      - storage/app/backups/    
+      - storage/app/backups/
 
 deploy_to_production:
   stage: deploy
   script:
-    - tar -C dist -zcf artifact.tar.gz .
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
     - sh develop php bin/dep deploy production -vv --dist=artifact.tar.gz
   environment:
     name: production
-    url: http://XXX.com
+    url: http://galleryrobkoudijs.nl
   when: manual
   only:
-    - master  
+    - master
   artifacts:
     expire_in: 1 day
     paths:
-      - storage/app/backups/  
+      - storage/app/backups/
