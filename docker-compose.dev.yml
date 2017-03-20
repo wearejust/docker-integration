@@ -3,7 +3,7 @@ version: '2.1'
 services:
 
   app:
-    image: wearejust/nginx
+    image: wearejust/nginx:1.0
     volumes:
       - ./:/var/www/html
     ports:
