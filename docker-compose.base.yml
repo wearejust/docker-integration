@@ -3,7 +3,7 @@ version: '2.1'
 services:
 
   php:
-    image: wearejust/php:7.0
+    image: wearejust/php-fpm:7.1
     volumes:
       - ./:/var/www/html
     networks:
