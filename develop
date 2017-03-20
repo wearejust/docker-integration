@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
 # Via: http://stackoverflow.com/questions/13322485/how-to-i-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
-export XDEBUG_HOST=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
+export HOST=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
+export DOMAIN=app.$(echo `basename $PWD`).docker
 
-export APP_ENV=${APP_ENV:-local}
-export APP_PORT=${APP_PORT:-8081}
-export DB_PORT=${DB_PORT:-3306}
 export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
-export DB_NAME=${DB_NAME:-robkoudijs}
-export DB_USER=${DB_USER:-robkoudijs}
+export DB_NAME=${DB_NAME:-website}
+export DB_USER=${DB_USER:-website}
 export DB_PASS=${DB_PASS:-secret}
 
 # If $CI_BUILD_REF is set, the file is ran from GitLab
@@ -53,9 +51,9 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "composer" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
+            -w /app \
             $COMPOSER_CACHE_DIR \
-            app \
+            composer \
             composer "$@"
 
     # If "composer" is used, pass-thru to "composer" inside a new container
@@ -63,7 +61,7 @@ if [ $# -gt 0 ];then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
-            app \
+            php \
             php "$@"
 
     # If "test" is used, run unit tests, pass-thru any extra arguments to php-unit
@@ -71,7 +69,7 @@ if [ $# -gt 0 ];then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
-            app \
+            php \
             ./vendor/bin/phpunit "$@"
 
 
@@ -98,22 +96,18 @@ if [ $# -gt 0 ];then
         GREEN='\033[00;32m' YELLOW='\033[11;33m' NORMAL='\033[0m' RED='\033[0;31m'
 
         echo -e "${RED}Ishi is required for this to work correctly (https://github.com/suin/ishi)${NORMAL}"
-        echo -e "IP for mobile use after setup: ${GREEN}${XDEBUG_HOST}${NORMAL}"
+        echo -e "IP for mobile use after setup: ${GREEN}${HOST}${NORMAL}"
 
         DOMAIN=${1:-"browsersync.$(echo `basename $PWD`).docker"}
         PORT=${2:-3000}
 
-        echo -e "\n${GREEN}Visit http://${XDEBUG_HOST}:${PORT}${NORMAL}"
+        echo -e "\n${GREEN}Visit http://${HOST}:${PORT}${NORMAL}"
 
         echo -e "${YELLOW}"
         sudo ${HOME}/go/bin/ishi --listen ${PORT} http://${DOMAIN}:${2:-$PORT}
         echo -e "${NORMAL}"
 
     else
-        if [ "$1" == "up" ]; then
-            sh ./develop yarn install
-            sh ./develop composer install --no-scripts
-        fi
 
         $COMPOSE "$@"
     fi

@@ -1,29 +1,34 @@
 version: '2.1'
 
 services:
-  app:
+
+  composer:
     extends:
       file: docker-compose.base.yml
-      service: app
+      service: composer
     volumes:
-      - './:/var/www/html'
       - '/composer_cache:/composer_cache'
-  
+
+  php:
+    extends:
+      file: docker-compose.base.yml
+      service: php
+
   yarn:
     extends:
       file: docker-compose.base.yml
       service: node
-  
+
   gulp:
     extends:
       file: docker-compose.base.yml
       service: node
-  
+
   node:
     extends:
       file: docker-compose.base.yml
       service: node
-
+      
 networks:
   sdnet:
     driver: "bridge"

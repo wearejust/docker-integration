@@ -1,26 +1,33 @@
 version: '2.1'
 
 services:
+
   app:
-    extends:
-      file: docker-compose.base.yml
-      service: app
-    ports:
-      - "${APP_PORT}:80"
+    image: wearejust/nginx
     volumes:
       - ./:/var/www/html
-    environment:
-      APP_ENV: ${APP_ENV}
-      XDEBUG_HOST: ${XDEBUG_HOST}
-  
+    ports:
+      - "8080:80"
+    networks:
+      - sdnet
+
+  php:
+    extends:
+      file: docker-compose.base.yml
+      service: php
+
+  composer:
+    extends:
+      file: docker-compose.base.yml
+      service: composer
+    command: ['composer', 'install']
+
   gulp:
-    command: ["/var/www/html/node_modules/.bin/gulp", 'watch']
+    command: bash -c "yarn install && /var/www/html/node_modules/.bin/gulp watch"
     extends:
       file: docker-compose.base.yml
       service: node
-    volumes:
-      - ./:/var/www/html
-  
+
   mailhog:
     image: mailhog/mailhog:latest
     ports:
@@ -28,31 +35,32 @@ services:
     networks:
     - sdnet
 
-  mysql:
-    extends:
-        file: docker-compose.base.yml
-        service: mysql
-    ports:
-      - "${DB_PORT}:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
-      MYSQL_DATABASE: "${DB_NAME}"
-      MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_PASS}"
-
   browsersync:
     image: ustwo/browser-sync:latest
-    command: start --proxy "REPLACE_THIS_WITH_FQDN" --files "public/css/*.css"
+    command: start --proxy "${DOMAIN}" --files "public/css/*.css"
     volumes:
       - ./:/source
     ports:
       - "3000:3000"
       - "3001:3001"
 
+  mysql:
+    extends:
+        file: docker-compose.base.yml
+        service: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS}"
+
   node:
     extends:
       file: docker-compose.base.yml
       service: node
+
 networks:
   sdnet:
     driver: "bridge"

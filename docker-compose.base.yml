@@ -1,21 +1,31 @@
 version: '2.1'
 
 services:
-  app:
-    image: wearejust/nginx-php:1.0
+
+  php:
+    image: wearejust/php:7.0
+    volumes:
+      - ./:/var/www/html
     networks:
-    - sdnet
+      - sdnet
+            
+  node:
+    image: wearejust/node:1.0
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - sdnet
+
+  composer:
+    image: composer:1.4
+    volumes:
+      - ./:/app
+    networks:
+      - sdnet     
 
   mysql:
     image: mysql:5.7
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - sdnet
-      
-  node:
-    image: wearejust/node:1.0
-    volumes:
-      - ./:/var/www/html
     networks:
       - sdnet
