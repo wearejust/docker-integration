@@ -39,7 +39,7 @@ services:
 
   browsersync:
     image: ustwo/browser-sync:latest
-    command: start --proxy "${DOMAIN}" --files "public/css/*.css"
+    command: start --proxy "app.${DOMAIN}" --files "public/css/*.css"
     volumes:
       - ./:/source
     ports:
@@ -66,6 +66,7 @@ services:
 networks:
   sdnet:
     driver: "bridge"
+    
 volumes:
   mysql_data:
     driver: "local"

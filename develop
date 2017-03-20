@@ -2,7 +2,7 @@
 
 # Via: http://stackoverflow.com/questions/13322485/how-to-i-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
 export HOST=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
-export DOMAIN=app.$(echo `basename $PWD`).docker
+export DOMAIN=$(echo `basename $PWD`).docker
 
 export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
 export DB_NAME=${DB_NAME:-website}
@@ -98,17 +98,17 @@ if [ $# -gt 0 ];then
         echo -e "${RED}Ishi is required for this to work correctly (https://github.com/suin/ishi)${NORMAL}"
         echo -e "IP for mobile use after setup: ${GREEN}${HOST}${NORMAL}"
 
-        DOMAIN=${1:-"browsersync.$(echo `basename $PWD`).docker"}
+        SHAREDOMAIN=${1:-"browsersync.$(echo $DOMAIN)"}
         PORT=${2:-3000}
 
         echo -e "\n${GREEN}Visit http://${HOST}:${PORT}${NORMAL}"
+        echo -e "\n${NORMAL}Please enter sudo password:${NORMAL}"
 
         echo -e "${YELLOW}"
-        sudo ${HOME}/go/bin/ishi --listen ${PORT} http://${DOMAIN}:${2:-$PORT}
+        sudo ${HOME}/go/bin/ishi --listen ${PORT} http://${SHAREDOMAIN}:${2:-$PORT}
         echo -e "${NORMAL}"
 
     else
-
         $COMPOSE "$@"
     fi
 else
