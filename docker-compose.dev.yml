@@ -8,6 +8,8 @@ services:
       - ./:/var/www/html
     ports:
       - "8080:80"
+    depends_on: 
+      - php
     networks:
       - sdnet
 
