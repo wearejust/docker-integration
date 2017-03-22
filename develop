@@ -53,7 +53,7 @@ if [ $# -gt 0 ];then
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
             $COMPOSER_CACHE_DIR \
-            php \
+            composer \
             composer "$@"
 
     # If "composer" is used, pass-thru to "composer" inside a new container

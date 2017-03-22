@@ -8,9 +8,10 @@ services:
       - ./:/var/www/html
     networks:
       - sdnet
-            
+
   node:
     image: wearejust/node:1.0
+    working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
     networks:
