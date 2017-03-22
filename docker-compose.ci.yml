@@ -2,17 +2,12 @@ version: '2.1'
 
 services:
 
-  composer:
-    extends:
-      file: docker-compose.base.yml
-      service: composer
-    volumes:
-      - '/composer_cache:/composer_cache'
-
   php:
     extends:
       file: docker-compose.base.yml
       service: php
+    volumes:
+      - '/composer_cache:/composer_cache'
 
   yarn:
     extends:

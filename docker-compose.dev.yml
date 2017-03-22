@@ -17,11 +17,6 @@ services:
     extends:
       file: docker-compose.base.yml
       service: php
-
-  composer:
-    extends:
-      file: docker-compose.base.yml
-      service: composer
     command: ['composer', 'install']
 
   gulp:

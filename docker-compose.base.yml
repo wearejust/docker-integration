@@ -14,14 +14,7 @@ services:
     volumes:
       - ./:/var/www/html
     networks:
-      - sdnet
-
-  composer:
-    image: composer:1.4
-    volumes:
-      - ./:/app
-    networks:
-      - sdnet     
+      - sdnet 
 
   mysql:
     image: mysql:5.7

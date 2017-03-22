@@ -44,16 +44,16 @@ if [ $# -gt 0 ];then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
-            app \
+            php \
             php artisan "$@"
 
     # If "composer" is used, pass-thru to "composer" inside a new container
     elif [ "$1" == "composer" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /app \
+            -w /var/www/html \
             $COMPOSER_CACHE_DIR \
-            composer \
+            php \
             composer "$@"
 
     # If "composer" is used, pass-thru to "composer" inside a new container
