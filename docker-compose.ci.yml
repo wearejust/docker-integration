@@ -9,6 +9,14 @@ services:
     volumes:
       - '/composer_cache:/composer_cache'
 
+ composer:
+    extends:
+      file: docker-compose.base.yml
+      service: php
+    command: ['composer']    
+    volumes:   
+      - '/composer_cache:/composer_cache'
+      
   yarn:
     extends:
       file: docker-compose.base.yml
