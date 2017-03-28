@@ -4,6 +4,7 @@ services:
 
   php:
     image: wearejust/php-fpm:7.1
+    working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
     networks:

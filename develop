@@ -2,7 +2,7 @@
 
 # Via: http://stackoverflow.com/questions/13322485/how-to-i-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
 export HOST=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
-export DOMAIN=$(echo `basename $PWD` | tr -d -).docker
+export DOMAIN=$(echo `basename $PWD` | tr -d - | tr '[:upper:]' '[:lower:]').docker
 
 export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
 export DB_NAME=${DB_NAME:-website}
@@ -43,7 +43,6 @@ if [ $# -gt 0 ];then
     if [ "$1" == "artisan" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
             php \
             php artisan "$@"
 
@@ -51,7 +50,6 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "composer" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
             $COMPOSER_CACHE_DIR \
             php \
             composer "$@"
@@ -60,7 +58,6 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "php" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
             php \
             php "$@"
 
@@ -68,7 +65,6 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "test" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
             php \
             ./vendor/bin/phpunit "$@"
 
@@ -77,7 +73,6 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "yarn" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
             node \
             yarn "$@"
 
@@ -85,7 +80,6 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "gulp" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            -w /var/www/html \
             node \
             ./node_modules/.bin/gulp "$@"
 

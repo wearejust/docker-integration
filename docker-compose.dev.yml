@@ -4,6 +4,7 @@ services:
 
   app:
     image: wearejust/nginx:1.0
+    working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
     ports:
@@ -45,7 +46,7 @@ services:
     ports:
       - "3000:3000"
       - "3001:3001"
-
+      
   mysql:
     extends:
         file: docker-compose.base.yml
@@ -61,7 +62,7 @@ services:
 networks:
   sdnet:
     driver: "bridge"
-    
+
 volumes:
   mysql_data:
     driver: "local"

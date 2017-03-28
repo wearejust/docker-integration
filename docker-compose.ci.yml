@@ -9,14 +9,12 @@ services:
     volumes:
       - '/composer_cache:/composer_cache'
 
- composer:
+  composer:
     extends:
       file: docker-compose.base.yml
       service: php
-    command: ['composer']    
-    volumes:   
-      - '/composer_cache:/composer_cache'
-      
+    command: ['composer']
+
   yarn:
     extends:
       file: docker-compose.base.yml
@@ -27,15 +25,6 @@ services:
       file: docker-compose.base.yml
       service: node
 
-  node:
-    extends:
-      file: docker-compose.base.yml
-      service: node
-      
 networks:
   sdnet:
     driver: "bridge"
-    
-volumes:
-  mysql_data:
-    driver: "local"
