@@ -26,7 +26,7 @@ services:
     command: ['composer', 'install']      
 
   gulp:
-    command: bash -c "yarn install && node_modules/.bin/gulp watch"
+    command: bash -c "yarn install && node_modules/.bin/gulp && node_modules/.bin/gulp watch"
     extends:
       file: docker-compose.base.yml
       service: node
