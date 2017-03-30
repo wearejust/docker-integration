@@ -73,14 +73,14 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "yarn" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            node \
+            gulp \
             yarn "$@"
 
     # If "gulp" is used, run gulp from our node container
     elif [ "$1" == "gulp" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            node \
+            gulp \
             ./node_modules/.bin/gulp "$@"
 
     # If "share" is used, run ishi to share
