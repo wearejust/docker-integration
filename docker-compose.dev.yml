@@ -37,15 +37,6 @@ services:
         - "8025:8025"
     networks:
     - sdnet
-
-  browsersync:
-    image: ustwo/browser-sync:latest
-    command: start --proxy "app.${DOMAIN}" --files "public/css/*.css"
-    volumes:
-      - ./:/source
-    ports:
-      - "3000:3000"
-      - "3001:3001"
       
   mysql:
     extends:
