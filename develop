@@ -89,19 +89,16 @@ if [ $# -gt 0 ];then
 
         GREEN='\033[00;32m' YELLOW='\033[11;33m' NORMAL='\033[0m' RED='\033[0;31m'
 
-        echo -e "${RED}Ishi is required for this to work correctly (https://github.com/suin/ishi)${NORMAL}"
-        echo -e "IP for mobile use after setup: ${GREEN}${HOST}${NORMAL}"
+        echo -e "${RED}Please install browsersync before using this${NORMAL}"
 
-        SHAREDOMAIN=${1:-"browsersync.$(echo $DOMAIN)"}
-        PORT=${2:-3000}
+        SHAREDOMAIN=${1:-"app.$(echo $DOMAIN)"}
 
         echo -e "\n${GREEN}Visit http://${HOST}:${PORT}${NORMAL}"
-        echo -e "\n${NORMAL}Please enter sudo password:${NORMAL}"
 
         echo -e "${YELLOW}"
-        sudo ${HOME}/go/bin/ishi --verbose --listen ${PORT} http://${SHAREDOMAIN}:${2:-$PORT}
+        browser-sync start --proxy "$SHAREDOMAIN" --files "public/css/*.css" --files "public/js/*.js"
         echo -e "${NORMAL}"
-
+        
     else
         $COMPOSE "$@"
     fi
