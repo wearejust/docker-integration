@@ -83,7 +83,7 @@ if [ $# -gt 0 ];then
             gulp \
             ./node_modules/.bin/gulp "$@"
 
-    # If "share" is used, run ishi to share
+    # If "share" is used,
     elif [ "$1" == "share" ]; then
         shift 1
 
