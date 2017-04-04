@@ -97,11 +97,7 @@ if [ $# -gt 0 ];then
             npm install -g browser-sync
         fi
 
-        echo -e "${RED}Please install browsersync before using this${NORMAL}"
-
         SHAREDOMAIN=${1:-"app.$(echo $DOMAIN)"}
-
-        echo -e "\n${GREEN}Visit http://${HOST}:${PORT}${NORMAL}"
 
         echo -e "${YELLOW}"
         browser-sync start --proxy "$SHAREDOMAIN" --files "public/css/*.css" --files "public/js/*.js"
