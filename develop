@@ -87,7 +87,15 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "share" ]; then
         shift 1
 
+        echo -e "\n${RED}Running browsersync${NORMAL}"
+
         GREEN='\033[00;32m' YELLOW='\033[11;33m' NORMAL='\033[0m' RED='\033[0;31m'
+        INSTALLED="$(echo `npm list --depth 1 --global 'browser-sync' | grep 'browser-sync'`)"
+
+        if [ ! "$INSTALLED" ]; then
+            echo -e "\n${RED}No browser-sync found, installing...${NORMAL}"
+            npm install -g browser-sync
+        fi
 
         echo -e "${RED}Please install browsersync before using this${NORMAL}"
 
