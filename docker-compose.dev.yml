@@ -3,7 +3,7 @@ version: '2.1'
 services:
 
   app:
-    image: wearejust/nginx:1.0
+    image: wearejust/nginx:1.0.1
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -23,10 +23,10 @@ services:
     extends:
       file: docker-compose.base.yml
       service: php
-    command: ['composer', 'install']      
+    command: ['composer', 'install']
 
   gulp:
-    command: bash -c "yarn install && node_modules/.bin/gulp && node_modules/.bin/gulp watch"
+    command: bash -c "yarn install --no-bin-links && node_modules/gulp/bin/gulp.js && node_modules/gulp/bin/gulp.js watch"
     extends:
       file: docker-compose.base.yml
       service: node
@@ -37,7 +37,7 @@ services:
         - "8025:8025"
     networks:
     - sdnet
-      
+
   mysql:
     extends:
         file: docker-compose.base.yml
