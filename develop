@@ -45,6 +45,13 @@ if [ $# -gt 0 ];then
         $COMPOSE run --rm $TTY \
             php \
             php artisan "$@"
+            
+    # If "console" is used, pass-thru to "bin/console" inside a new container
+    elif [ "$1" == "console" ]; then
+        shift 1
+        $COMPOSE run --rm $TTY \
+            php \
+            php bin/console "$@"
 
     # If "composer" is used, pass-thru to "composer" inside a new container
     elif [ "$1" == "composer" ]; then
