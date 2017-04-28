@@ -19,6 +19,10 @@ if [ ! -z "$CI_BUILD_REF" ]; then
 
     # Enable pseudo-TTY allocation for CI (GitLab)
     TTY="-T"
+
+    # Custom project name $DIRNAME_$RANDOMID to run containers on multiple times at once.
+    export COMPOSE_PROJECT_NAME=$(echo `basename $PWD`)_$(echo `cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 32`)
+    
 else
     # Create volume (reuse is exists) to reuse
     # compose cache along multiple projects
