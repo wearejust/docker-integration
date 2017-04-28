@@ -19,6 +19,8 @@ services:
     extends:
       file: docker-compose.base.yml
       service: node
+    volumes:
+      - '/yarn_cache:/yarn_cache'
 
   gulp:
     extends:

@@ -14,6 +14,9 @@ if [ ! -z "$CI_BUILD_REF" ]; then
     # Use custom composer cache dir for sharing cache along builds
     COMPOSER_CACHE_DIR="-e COMPOSER_CACHE_DIR=/composer_cache"
 
+    # Use custom yarn cache dir for sharing cache along builds
+    YARN_CACHE_DIR="--cache-folder /yarn_cache"
+
     # Use ci file for ci development
     COMPOSE_FILE="ci"
 
@@ -29,6 +32,9 @@ else
 
     # Use default composer cache dir from composer
     COMPOSER_CACHE_DIR=""
+
+    # Use default yarn cache dir from yarn
+    YARN_CACHE_DIR=""
 
     # Use dev file for local development
     COMPOSE_FILE="dev"
@@ -73,8 +79,8 @@ if [ $# -gt 0 ];then
     elif [ "$1" == "yarn" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
-            gulp \
-            yarn "$@"
+            yarn \
+            yarn "$@" $YARN_CACHE_DIR
 
     # If "gulp" is used, run gulp from our node container
     elif [ "$1" == "gulp" ]; then
