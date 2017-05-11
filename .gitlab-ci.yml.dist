@@ -4,6 +4,7 @@ stages:
   - build
   - distribute
   - deploy
+  - cleanup
 
 cache:
   paths:
@@ -15,11 +16,13 @@ before_script:
 
 build:
   stage: build
+  allow_failure: false
   script:
     - sh develop composer install
 
 distribute:
   stage: distribute
+  allow_failure: false
   script:
     - git archive --format=tar --worktree-attributes $(git rev-parse HEAD) | tar -xf -  -C dist
     - cd dist
@@ -38,8 +41,10 @@ distribute:
 
 deploy_to_staging:
   stage: deploy
+  allow_failure: false  
   script:
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
+    - sh develop php bin/dep deploy:unlock staging
     - sh develop php bin/dep deploy staging -vv --dist=artifact.tar.gz
   environment:
     name: staging
@@ -53,8 +58,10 @@ deploy_to_staging:
 
 deploy_to_production:
   stage: deploy
+  allow_failure: false  
   script:
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
+    - sh develop php bin/dep deploy:unlock production
     - sh develop php bin/dep deploy production -vv --dist=artifact.tar.gz
   environment:
     name: production
@@ -66,3 +73,9 @@ deploy_to_production:
     expire_in: 1 day
     paths:
       - storage/app/backups/
+
+cleanup:
+    stage: cleanup
+    when: always
+    script:
+        - sh develop down
