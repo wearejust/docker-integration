@@ -110,7 +110,7 @@ if [ $# -gt 0 ];then
         SHAREDOMAIN=${1:-"app.$(echo $DOMAIN)"}
 
         echo -e "${YELLOW}"
-        browser-sync start --proxy "$SHAREDOMAIN" --files "public/css/*.css" --files "public/js/*.js"
+        browser-sync start --proxy "$SHAREDOMAIN" --files "public/build/*" --files "resources/views/**/*"
         echo -e "${NORMAL}"
         
     else
