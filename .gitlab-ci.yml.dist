@@ -7,29 +7,29 @@ stages:
   - cleanup
 
 cache:
+  key: "$CI_COMMIT_REF_NAME"
   paths:
-    - vendor
-    - node_modules
-
-before_script:
-  - cp .env.example .env
+    - vendor/
+    - node_modules/
 
 build:
   stage: build
-  allow_failure: false
   script:
-    - sh develop composer install
+    - sh develop composer install --no-scripts
+    - sh develop yarn install
 
 distribute:
   stage: distribute
-  allow_failure: false
   script:
-    - git archive --format=tar --worktree-attributes $(git rev-parse HEAD) | tar -xf -  -C dist
-    - cd dist
-    - sh develop composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - sh develop composer install --no-scripts
     - sh develop yarn install
-    - sh develop gulp
-    - rm -rf node_modules docker* develop deploy.php gulpfile.js grumphp.yml codeception.yml package.json composer.json .gitlab-ci.yml .php_cs .env
+    - mkdir -p dist
+    - git archive --format=tar --worktree-attributes $(git rev-parse HEAD) | tar -xf -  -C dist
+    - mv node_modules vendor dist/
+    - cd dist
+    - sh develop composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader --no-progress --no-interaction
+    - sh develop yarn build-prod
+    - rm -rf node_modules docker* composer.json package.json
     - tar -C . -zcf ../artifact.tar.gz .
   artifacts:
     expire_in: 1 week
@@ -41,41 +41,42 @@ distribute:
 
 deploy_to_staging:
   stage: deploy
-  allow_failure: false  
+  allow_failure: false
   script:
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
-    - sh develop php bin/dep deploy:unlock staging
-    - sh develop php bin/dep deploy staging -vv --dist=artifact.tar.gz
+    - sh develop php vendor/bin/dep deploy:unlock staging
+    - sh develop php vendor/bin/dep deploy staging -vv --dist=artifact.tar.gz
   environment:
     name: staging
-    url: http://koudijs.justnotfinished.com
+    url: http://XXX.com
   only:
     - staging
+  when: on_success
   artifacts:
     expire_in: 1 day
     paths:
-      - storage/app/backups/
+      - var/backups
 
 deploy_to_production:
   stage: deploy
-  allow_failure: false  
+  allow_failure: false
   script:
     - sh develop composer install --prefer-dist --no-progress --no-interaction --no-scripts
-    - sh develop php bin/dep deploy:unlock production
-    - sh develop php bin/dep deploy production -vv --dist=artifact.tar.gz
+    - sh develop php vendor/bin/dep deploy:unlock production
+    - sh develop php vendor/bin/dep deploy production -vv --dist=artifact.tar.gz
   environment:
     name: production
-    url: http://galleryrobkoudijs.nl
+    url: http://XXX.nl
   when: manual
   only:
     - master
   artifacts:
     expire_in: 1 day
     paths:
-      - storage/app/backups/
+      - var/backups
 
 cleanup:
-    stage: cleanup
-    when: always
-    script:
-        - sh develop down
+  stage: cleanup
+  script:
+    - sh develop clean
+  when: always

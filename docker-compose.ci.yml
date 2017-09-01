@@ -8,24 +8,14 @@ services:
       service: php
     volumes:
       - '/composer_cache:/composer_cache'
+      - '/ssh:/ssh'
 
-  composer:
-    extends:
-      file: docker-compose.base.yml
-      service: php
-    command: ['composer']
-
-  yarn:
+  node:
     extends:
       file: docker-compose.base.yml
       service: node
     volumes:
       - '/yarn_cache:/yarn_cache'
-
-  gulp:
-    extends:
-      file: docker-compose.base.yml
-      service: node
 
 networks:
   sdnet:

@@ -3,7 +3,10 @@ version: '2.1'
 services:
 
   php:
-    image: wearejust/php-fpm:7.1
+    build:
+        context: ./docker/php
+        dockerfile: Dockerfile
+    image: wearejust/php-fpm:7.1-wkhtmltoimage
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -11,12 +14,12 @@ services:
       - sdnet
 
   node:
-    image: wearejust/node:1.0
+    image: wearejust/node:1.0.1
     working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
     networks:
       - sdnet 
+    volumes:
+      - ./:/var/www/html
 
   mysql:
     image: mysql:5.7

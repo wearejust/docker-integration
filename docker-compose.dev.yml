@@ -2,8 +2,15 @@ version: '2.1'
 
 services:
 
+  redis:
+    image: redis:4
+    ports:
+      - "6379:6379"
+    networks:
+      - sdnet
+
   app:
-    image: wearejust/nginx:1.0.1
+    image: wearejust/nginx:2.0.2
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -18,25 +25,24 @@ services:
     extends:
       file: docker-compose.base.yml
       service: php
+    volumes:
+      - ${HOME}/.composer:/composer_cache
 
-  composer:
-    extends:
-      file: docker-compose.base.yml
-      service: php
-    command: ['composer', 'install']
-
-  gulp:
-    command: bash -c "yarn install --no-bin-links && node_modules/gulp/bin/gulp.js && node_modules/gulp/bin/gulp.js watch"
+  node:
     extends:
       file: docker-compose.base.yml
       service: node
+    volumes:
+        - ${HOME}/.yarn:/yarn_cache
 
   mailhog:
-    image: mailhog/mailhog:latest
+    image: mailhog/mailhog:v1.0.0
     ports:
         - "8025:8025"
     networks:
-    - sdnet
+      - sdnet
+    logging:
+      driver: none
 
   mysql:
     extends:
@@ -45,10 +51,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
-      MYSQL_DATABASE: "${DB_NAME}"
-      MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_PASS}"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_DATABASE: "website"
+      MYSQL_USER: "website"
+      MYSQL_PASSWORD: "secret"
 
 networks:
   sdnet:
