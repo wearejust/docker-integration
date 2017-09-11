@@ -14,7 +14,7 @@ services:
       - sdnet
 
   node:
-    image: wearejust/node:1.0.1
+    image: wearejust/node:1.1
     working_dir: /var/www/html
     networks:
       - sdnet 
