@@ -50,11 +50,15 @@ yarn() {
     compose run --rm $TTY "-e YARN_CACHE_FOLDER=/yarn_cache" node yarn "$@"
 }
 
+up() {
+    start
+}
+
 start() {
+    docker ps -a -q -f "name=_1" | xargs -I {} docker stop {} | xargs -I {} docker rm  {}
     compose "up" "-d" "--remove-orphans"
     composer "install"
-#    yarn "install" "--no-bin-links"
-#    yarn "build-dev"
+    yarn "install" "--no-bin-links"
     console "doctrine:migrations:migrate" "-n"
     console "doctrine:fixtures:load" "-n"
     compose "logs" "--follow"
@@ -62,6 +66,10 @@ start() {
 
 stop() {
 	compose down
+}
+
+down() {
+    stop
 }
 
 clean() {
