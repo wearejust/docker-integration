@@ -30,21 +30,21 @@ Will shutdown the running containers
 Will run the command you give (ARGS) it using ```docker-compose```.
 
 ### ```./develop artisan ARGS```
-Will run an ```php artisan``` command with the arguments you give it in an seperate container.
+Will run an ```php artisan``` command with the arguments you give it in an separate container.
 
 
 ### ```./develop composer ARGS```
-Will run an ```composer``` command with the arguments you give it in an seperate container.
+Will run an ```composer``` command with the arguments you give it in an separate container.
 
 ### ```./develop test ARGS```
-Will run an ```./vendor/bin/phpunit``` command with the arguments you give it in an seperate container to run your tests.
+Will run an ```./vendor/bin/phpunit``` command with the arguments you give it in an separate container to run your tests.
 
 
 ### ```./develop yarn ARGS```
-Will run an ```yarn``` command with the arguments you give it in an seperate container.
+Will run an ```yarn``` command with the arguments you give it in an separate container.
 
 ### ```./develop gulp ARGS```
-Will run an ```gulp ``` command with the arguments you give it in an seperate container.
+Will run an ```gulp ``` command with the arguments you give it in an separate container.
 
 
 ### ```./develop```
@@ -52,8 +52,8 @@ Will run an ```docker ps``` command
 
 
 ## MailHog
-You can use this service to recieve / test local mails being send from the aplication.
-WebUI: https://app.*.docker:8025, for sending to the application you can use the followingsettings:
+You can use this service to receive / test local mails being send from the application.
+WebUI: https://app.*.docker:8025, for sending to the application you can use the following settings:
 ```
 MAIL_DRIVER=smtp
 MAIL_HOST=mailhog
